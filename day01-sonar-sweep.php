@@ -13,7 +13,7 @@ $previous_depth = null;
 $deeper_depths = 0;
 
 foreach ($depths as $depth) {
-    if ($previous_depth === null || $depth > $previous_depth) {
+    if ($previous_depth !== null && $depth > $previous_depth) {
         $deeper_depths++;
     }
 
