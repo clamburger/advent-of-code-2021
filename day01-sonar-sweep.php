@@ -34,11 +34,11 @@ $deeper_measurements = 0;
 
 $measurement_window = [];
 
-foreach ($depths as $depth) {
+foreach ($depths as $index => $depth) {
     $previous_measurement = array_sum($measurement_window);
     $measurement_window[] = $depth;
 
-    if (count($measurement_window) < 3) {
+    if ($index <= 2) {
         // We need a full measurement window before we can start comparing
         continue;
     }
