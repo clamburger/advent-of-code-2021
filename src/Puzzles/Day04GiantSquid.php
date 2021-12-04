@@ -8,12 +8,8 @@ class Day04GiantSquid extends AbstractPuzzle
 {
     protected static int $day_number = 4;
 
-    private array $number_order = [];
-    private array $numbers_called_so_far = [];
+    private array $number_order;
     private array $boards = [];
-
-    private array $winning_board;
-    private int $winning_number;
 
     public function __construct()
     {
@@ -78,29 +74,48 @@ class Day04GiantSquid extends AbstractPuzzle
 
     public function getPartOneAnswer(): int
     {
+        $numbers_called_so_far = [];
+
         foreach ($this->number_order as $number) {
-            $this->numbers_called_so_far[] = $number;
+            $numbers_called_so_far[] = $number;
 
             foreach ($this->boards as $board) {
-                $bingo = $this->doesBoardHaveABingo($board, $this->numbers_called_so_far);
+                $bingo = $this->doesBoardHaveABingo($board, $numbers_called_so_far);
                 if ($bingo) {
-                    $this->winning_board = $board;
-                    $this->winning_number = $number;
-                    break 2;
+                    $board_score = $this->calculateBoardScore($board, $numbers_called_so_far);
+                    return $board_score * $number;
                 }
             }
         }
 
-        if (!$this->winning_number) {
-            throw new Exception('Numbers exhausted without finding a winner.');
-        }
-
-        $board_score = $this->calculateBoardScore($this->winning_board, $this->numbers_called_so_far);
-        return $board_score * $this->winning_number;
+        throw new Exception('Numbers exhausted without finding a winner.');
     }
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        $numbers_called_so_far = [];
+        $boards_won = [];
+
+        foreach ($this->number_order as $number) {
+            $numbers_called_so_far[] = $number;
+
+            foreach ($this->boards as $index => $board) {
+                if (in_array($index, $boards_won)) {
+                    continue;
+                }
+
+                $bingo = $this->doesBoardHaveABingo($board, $numbers_called_so_far);
+                if ($bingo) {
+                    $boards_won[] = $index;
+                }
+
+                if (count($boards_won) === count($this->boards)) {
+                    $board_score = $this->calculateBoardScore($board, $numbers_called_so_far);
+                    return $board_score * $number;
+                }
+            }
+        }
+
+        throw new Exception('Numbers exhausted without finding the worst board.');
     }
 }
