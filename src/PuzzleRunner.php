@@ -6,6 +6,7 @@ use App\Puzzles\AbstractPuzzle;
 use App\Puzzles\Day01SolarSweep;
 use App\Puzzles\Day02Dive;
 use App\Puzzles\Day03BinaryDiagnostic;
+use App\Puzzles\Day04GiantSquid;
 
 class PuzzleRunner
 {
@@ -17,7 +18,8 @@ class PuzzleRunner
         $this->puzzles = [
             1 => new Day01SolarSweep(),
             new Day02Dive(),
-            new Day03BinaryDiagnostic()
+            new Day03BinaryDiagnostic(),
+            new Day04GiantSquid()
         ];
     }
 
