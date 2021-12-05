@@ -39,9 +39,7 @@ class Day05HydrothermalVenture extends AbstractPuzzle
             }
         }
 
-        $max = max($danger_zones);
-
-        return count(array_filter($danger_zones, fn ($number) => $number === $max));
+        return count(array_filter($danger_zones, fn ($number) => $number >= 2));
     }
 
     public function getPartTwoAnswer(): int
