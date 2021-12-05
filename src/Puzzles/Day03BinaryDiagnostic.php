@@ -6,12 +6,14 @@ class Day03BinaryDiagnostic extends AbstractPuzzle
 {
     protected static int $day_number = 3;
 
+    private array $bits;
+
     public function __construct()
     {
         parent::__construct();
 
         // Split each input into an array of bits
-        $this->inputs = array_map(fn ($number) => str_split($number, 1), $this->inputs);
+        $this->bits = array_map(fn ($number) => str_split($number, 1), $this->input->lines);
     }
 
     /**
@@ -21,13 +23,13 @@ class Day03BinaryDiagnostic extends AbstractPuzzle
      */
     public function getPartOneAnswer(): int
     {
-        $bit_count = count($this->inputs[0]);
+        $bit_count = count($this->bits[0]);
 
         $gamma_rate = '';
         $epsilon_rate = '';
 
         for ($i = 0; $i < $bit_count; $i++) {
-            $bits_in_column = array_column($this->inputs, $i);
+            $bits_in_column = array_column($this->bits, $i);
             $counts = array_count_values($bits_in_column);
 
             if ($counts[0] > $counts[1]) {
@@ -56,7 +58,7 @@ class Day03BinaryDiagnostic extends AbstractPuzzle
         // Calculate the oxygen generator rating
         //
 
-        $candidates = $this->inputs;
+        $candidates = $this->bits;
         $bit_index = 0;
 
         while (count($candidates) > 1) {
@@ -76,7 +78,7 @@ class Day03BinaryDiagnostic extends AbstractPuzzle
         // Calculate the CO2 scrubber rating
         //
 
-        $candidates = $this->inputs;
+        $candidates = $this->bits;
         $bit_index = 0;
 
         while (count($candidates) > 1) {

@@ -2,11 +2,16 @@
 
 namespace App\Puzzles;
 
+use App\Input;
 use Exception;
 
 abstract class AbstractPuzzle
 {
-    protected array $inputs;
+    /**
+     * @var Input The input for the puzzle.
+     */
+    protected Input $input;
+
     protected static int $day_number = 0;
 
     /**
@@ -20,11 +25,8 @@ abstract class AbstractPuzzle
 
         $filename = sprintf('day%02d.txt', static::$day_number);
         $filepath = __DIR__ . '/../../inputs/' . $filename;
-        if (!file_exists($filepath)) {
-            throw new Exception(sprintf('Input %s does not exist', $filename));
-        }
 
-        $this->inputs = array_map('trim', file($filepath));
+        $this->input = new Input($filepath);
     }
 
     abstract public function getPartOneAnswer(): int;

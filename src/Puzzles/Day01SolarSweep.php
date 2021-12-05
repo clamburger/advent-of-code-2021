@@ -17,7 +17,7 @@ class Day01SolarSweep extends AbstractPuzzle
 
         $deeper_depths = 0;
 
-        foreach ($this->inputs as $depth) {
+        foreach ($this->input->lines as $depth) {
             if ($previous_depth !== null && $depth > $previous_depth) {
                 $deeper_depths++;
             }
@@ -39,7 +39,7 @@ class Day01SolarSweep extends AbstractPuzzle
 
         $measurement_window = [];
 
-        foreach ($this->inputs as $index => $depth) {
+        foreach ($this->input->lines as $index => $depth) {
             $previous_measurement = array_sum($measurement_window);
             $measurement_window[] = $depth;
 

@@ -16,7 +16,7 @@ class Day02Dive extends AbstractPuzzle
         $horizontal_position = 0;
         $depth = 0;
 
-        foreach ($this->inputs as $command) {
+        foreach ($this->input->lines as $command) {
             [$direction, $distance] = explode(' ', $command);
             $distance = (int) $distance;
 
@@ -47,7 +47,7 @@ class Day02Dive extends AbstractPuzzle
         $depth = 0;
         $aim = 0;
 
-        foreach ($this->inputs as $command) {
+        foreach ($this->input->lines as $command) {
             [$direction, $distance] = explode(' ', $command);
             $distance = (int) $distance;
 
