@@ -7,6 +7,7 @@ use App\Puzzles\Day01SolarSweep;
 use App\Puzzles\Day02Dive;
 use App\Puzzles\Day03BinaryDiagnostic;
 use App\Puzzles\Day04GiantSquid;
+use App\Puzzles\Day05HydrothermalVenture;
 
 class PuzzleRunner
 {
@@ -19,7 +20,8 @@ class PuzzleRunner
             1 => new Day01SolarSweep(),
             new Day02Dive(),
             new Day03BinaryDiagnostic(),
-            new Day04GiantSquid()
+            new Day04GiantSquid(),
+            new Day05HydrothermalVenture(),
         ];
     }
 
