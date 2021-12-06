@@ -13,18 +13,22 @@ use App\Puzzles\Day06Lanternfish;
 class PuzzleRunner
 {
     /** @var AbstractPuzzle[] */
-    private array $puzzles;
+    private array $puzzles = [];
 
     public function __construct()
     {
-        $this->puzzles = [
-            1 => new Day01SolarSweep(),
-            new Day02Dive(),
-            new Day03BinaryDiagnostic(),
-            new Day04GiantSquid(),
-            new Day05HydrothermalVenture(),
-            new Day06LanternFish(),
-        ];
+        $puzzle_dir = __DIR__ . '/Puzzles';
+        $puzzle_files = glob($puzzle_dir . '/Day*.php');
+
+        foreach ($puzzle_files as $file) {
+            $class_name = basename($file, '.php');
+            $full_class_name = 'App\\Puzzles\\' . $class_name;
+            $puzzle = new $full_class_name;
+            $this->puzzles[$puzzle->getDay()] = $puzzle;
+        }
+
+        // Reverse the puzzle list so that the newest puzzles are at the start
+        $this->puzzles = array_reverse($this->puzzles, true);
     }
 
     public function getPuzzles(): array

@@ -29,6 +29,11 @@ abstract class AbstractPuzzle
         $this->input = new Input($filepath);
     }
 
+    public function getDay(): int
+    {
+        return static::$day_number;
+    }
+
     abstract public function getPartOneAnswer(): int;
     abstract public function getPartTwoAnswer(): int;
 }

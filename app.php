@@ -11,9 +11,26 @@ echo "====================================\n";
 echo "\n";
 
 $puzzle_runner = new PuzzleRunner();
+$puzzles = $puzzle_runner->getPuzzles();
 
-foreach ($puzzle_runner->getPuzzles() as $day => $puzzle) {
-    echo "Day $day\n";
+if (isset($argv[1])) {
+    $day = $argv[1];
+    if (!isset($puzzles[$day])) {
+        echo "Invalid puzzle specified.\n";
+        exit(1);
+    }
+
+    runPuzzle($puzzles[$day]);
+    exit(0);
+}
+
+foreach ($puzzles as $puzzle) {
+    runPuzzle($puzzle);
+}
+
+function runPuzzle(AbstractPuzzle $puzzle)
+{
+    echo "Day {$puzzle->getDay()}\n";
     echo "Part One: {$puzzle->getPartOneAnswer()}\n";
     echo "Part Two: {$puzzle->getPartTwoAnswer()}\n";
     echo "\n";
