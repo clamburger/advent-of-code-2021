@@ -8,6 +8,7 @@ use App\Puzzles\Day02Dive;
 use App\Puzzles\Day03BinaryDiagnostic;
 use App\Puzzles\Day04GiantSquid;
 use App\Puzzles\Day05HydrothermalVenture;
+use App\Puzzles\Day06Lanternfish;
 
 class PuzzleRunner
 {
@@ -22,6 +23,7 @@ class PuzzleRunner
             new Day03BinaryDiagnostic(),
             new Day04GiantSquid(),
             new Day05HydrothermalVenture(),
+            new Day06LanternFish(),
         ];
     }
 
