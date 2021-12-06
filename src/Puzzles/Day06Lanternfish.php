@@ -6,31 +6,62 @@ class Day06Lanternfish extends AbstractPuzzle
 {
     protected static int $day_number = 6;
 
-    private array $fish;
+    private array $fish_by_number;
+
+    private function resetFish()
+    {
+        $this->fish_by_number = array_count_values(explode(',', $this->input->lines[0]));
+        for ($i = 0; $i <= 8; $i++) {
+            if (!isset($this->fish_by_number[$i])) {
+                $this->fish_by_number[$i] = 0;
+            }
+        }
+        ksort($this->fish_by_number);
+    }
 
     public function getPartOneAnswer(): int
     {
-        $this->fish = explode(',', $this->input->lines[0]);
-
+        $this->resetFish();
         $limit = 80;
         for ($days = 0; $days < $limit; $days++) {
             $this->evolveFish();
         }
 
-        return count($this->fish);
+        return $this->getFishCount();
     }
 
     private function evolveFish()
     {
-        $this->fish = array_map(fn ($fish) => $fish - 1, $this->fish);
+        $new_fish = [];
+        foreach ($this->fish_by_number as $number => $count) {
+            $new_fish[$number - 1] = $count;
+        }
 
-        $evolved_count = count(array_filter($this->fish, fn ($fish) => $fish === -1));
-        $this->fish = array_merge($this->fish, array_fill(0, $evolved_count, 8));
-        $this->fish = array_map(fn ($fish) => $fish === -1 ? 6 : $fish, $this->fish);
+        $new_fish[6] = bcadd($new_fish[6], $new_fish[-1]);
+        $new_fish[8] = $new_fish[-1];
+        unset($new_fish[-1]);
+
+        $this->fish_by_number = $new_fish;
+    }
+
+    private function getFishCount()
+    {
+        $total = '0';
+        foreach ($this->fish_by_number as $number => $count) {
+            $total = bcadd($total, $count);
+        }
+
+        return $total;
     }
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        $this->resetFish();
+        $limit = 256;
+        for ($days = 0; $days < $limit; $days++) {
+            $this->evolveFish();
+        }
+
+        return $this->getFishCount();
     }
 }

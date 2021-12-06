@@ -2,7 +2,8 @@
   "name": "clamburger/advent-of-code-2021",
   "require": {
     "php": "^8.1",
-    "phpunit/phpunit": "^9.5"
+    "phpunit/phpunit": "^9.5",
+    "ext-bcmath": "*"
   },
   "autoload": {
     "psr-4": {
