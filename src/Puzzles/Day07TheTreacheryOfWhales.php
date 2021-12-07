@@ -37,6 +37,24 @@ class Day07TheTreacheryOfWhales extends AbstractPuzzle
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        $this->resetCrabs();
+
+        $limit = max($this->crabs);
+
+        $min = null;
+
+        for ($position = 0; $position <= $limit; $position++) {
+            $fuel = 0;
+            foreach ($this->crabs as $crab) {
+                $diff = abs($crab - $position);
+                $fuel += $diff * ($diff + 1) / 2;
+            }
+
+            if ($fuel < $min || $min === null) {
+                $min = $fuel;
+            }
+        }
+
+        return $min;
     }
 }
