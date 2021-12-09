@@ -15,6 +15,11 @@ $puzzles = $puzzle_runner->getPuzzles();
 
 if (isset($argv[1])) {
     $day = $argv[1];
+    if ($day === 'latest') {
+        runPuzzle(array_values($puzzles)[0]);
+        exit(0);
+    }
+
     if (!isset($puzzles[$day])) {
         echo "Invalid puzzle specified.\n";
         exit(1);
