@@ -7,7 +7,7 @@ class Day12PassagePathing extends AbstractPuzzle
     protected static int $day_number = 12;
 
     private array $caves = [];
-    private array $paths = [];
+    private array $paths;
 
     public function __construct()
     {
@@ -22,12 +22,13 @@ class Day12PassagePathing extends AbstractPuzzle
 
     public function getPartOneAnswer(): int
     {
-        $this->findPaths('start', 'end', []);
+        $this->paths = [];
+        $this->findPaths('start', 'end', [], $this->getOptions(...));
 
         return count($this->paths);
     }
 
-    private function findPaths(string $start, string $end, array $path_so_far)
+    private function findPaths(string $start, string $end, array $path_so_far, callable $options_callback)
     {
         $path_so_far[] = $start;
 
@@ -37,36 +38,60 @@ class Day12PassagePathing extends AbstractPuzzle
             return;
         }
 
-        $options = $this->getOptions($start, $path_so_far);
+        $options = $options_callback($start, $path_so_far);
         if (empty($options)) {
             // BAD END: we ran out of options before reaching our destination.
             return;
         }
 
         foreach ($options as $cave) {
-            $this->findPaths($cave, $end, $path_so_far);
+            $this->findPaths($cave, $end, $path_so_far, $options_callback);
         }
     }
 
-    private function getOptions(string $cave, array $path_so_far)
+    private function getOptions(string $cave, array $path_so_far): array
     {
         $options = $this->caves[$cave];
         return array_filter($options, fn ($cave) => ($this->isCaveBig($cave) || !in_array($cave, $path_so_far)));
     }
 
+    private function getOptionsPermissive(string $cave, array $path_so_far): array
+    {
+        $options = $this->caves[$cave];
+        $visits_per_cave = array_count_values($path_so_far);
+
+        $path_so_far_small_only = array_filter($path_so_far, fn ($cave) => !$this->isCaveBig($cave));
+        $visits_per_cave_small_only = array_count_values($path_so_far_small_only);
+        $small_visited_twice = max($visits_per_cave_small_only) >= 2;
+
+        return array_filter($options, function ($cave) use ($visits_per_cave, $small_visited_twice) {
+            // Big caves: unlimited
+            if ($this->isCaveBig($cave)) {
+                return true;
+            }
+
+            $visits_so_far = $visits_per_cave[$cave] ?? 0;
+
+            // Start or end: one time maximum
+            if ($cave === 'start' || $cave === 'end') {
+                return $visits_so_far < 1;
+            }
+
+            // Other small caves: one time maximum OR two times if no other small cave has been visited twice yet
+            return $visits_so_far < 1 || !$small_visited_twice;
+        });
+    }
 
     private function isCaveBig(string $cave): bool
     {
         return strtoupper($cave) === $cave;
     }
 
-    private function isCaveSmall(string $cave): bool
-    {
-        return !$this->isCaveBig($cave);
-    }
-
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        $this->paths = [];
+        $this->findPaths('start', 'end', [], $this->getOptionsPermissive(...));
+
+        return count($this->paths);
     }
 }
