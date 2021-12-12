@@ -30,9 +30,7 @@ class Day11DumboOctopus extends AbstractPuzzle
     public function getPartOneAnswer(): int
     {
         for ($step = 1; $step <= 193; $step++) {
-            echo "Step $step\n";
             $this->performStep();
-            echo Utilities::gridToString($this->octopuses) . "\n";
         }
 
         return $this->flashes;
