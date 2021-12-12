@@ -21,4 +21,9 @@ class Utilities
 
         return $transposed_array;
     }
+
+    public static function gridToString(array $array): string
+    {
+        return implode("\n", array_map(fn ($line) => implode('', $line), $array));
+    }
 }

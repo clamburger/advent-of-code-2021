@@ -17,6 +17,8 @@ class Input
      */
     public readonly array $lines;
 
+    public readonly array $grid;
+
     public readonly array $raw_blocks;
 
     /**
@@ -31,6 +33,7 @@ class Input
 
         $this->raw = rtrim(file_get_contents($filepath), "\r\n");
         $this->lines = array_map('rtrim', explode("\n", $this->raw));
+        $this->grid = array_map('str_split', $this->lines);
 
         $this->raw_blocks = explode("\n\n", $this->raw);
     }
