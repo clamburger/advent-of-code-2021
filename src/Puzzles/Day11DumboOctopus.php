@@ -17,14 +17,19 @@ class Day11DumboOctopus extends AbstractPuzzle
     public function __construct()
     {
         parent::__construct();
-        $this->octopuses = $this->input->grid;
+        $this->resetOctopuses();
         $this->height = count($this->octopuses);
         $this->width = count($this->octopuses[0]);
     }
 
+    private function resetOctopuses()
+    {
+        $this->octopuses = $this->input->grid;
+    }
+
     public function getPartOneAnswer(): int
     {
-        for ($step = 1; $step <= 100; $step++) {
+        for ($step = 1; $step <= 193; $step++) {
             echo "Step $step\n";
             $this->performStep();
             echo Utilities::gridToString($this->octopuses) . "\n";
@@ -80,6 +85,13 @@ class Day11DumboOctopus extends AbstractPuzzle
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        $this->resetOctopuses();
+        $step = 0;
+        while (count($this->flashed_this_step) !== 100) {
+            $step++;
+            $this->performStep();
+        }
+
+        return $step;
     }
 }
