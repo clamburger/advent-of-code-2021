@@ -36,6 +36,9 @@ class Day13TransparentOrigami extends AbstractPuzzle
     private function sortCoords()
     {
         usort($this->coords, fn ($a, $b) => $a['y'] <=> $b['y'] ?: $a['x'] <=> $b['x']);
+
+        $this->height = max(array_column($this->coords, 'y')) + 1;
+        $this->width = max(array_column($this->coords, 'x')) + 1;
     }
 
     private function cleanCoords()
@@ -50,7 +53,7 @@ class Day13TransparentOrigami extends AbstractPuzzle
 
     public function getPartOneAnswer(): int
     {
-        $instruction = $this->instructions[0];
+        $instruction = array_shift($this->instructions);
         $this->performInstruction($instruction[0], $instruction[1]);
         $this->sortCoords();
         $this->cleanCoords();
@@ -74,6 +77,26 @@ class Day13TransparentOrigami extends AbstractPuzzle
 
     public function getPartTwoAnswer(): int
     {
+        foreach ($this->instructions as $instruction) {
+            $this->performInstruction($instruction[0], $instruction[1]);
+            $this->sortCoords();
+        }
+
+        $this->cleanCoords();
+
+        echo $this->visualizeCoords() . "\n";
+
+        // Uhh... this will have to do
         return 0;
+    }
+
+    private function visualizeCoords(): string
+    {
+        $dots = array_fill(0, $this->height, array_fill(0, $this->width, '░'));
+        foreach ($this->coords as $coord) {
+            $dots[$coord['y']][$coord['x']] = '█';
+        }
+
+        return implode("\n", array_map(fn ($line) => implode('', $line), $dots));
     }
 }
