@@ -6,26 +6,33 @@ class Day15Chiton extends AbstractPuzzle
 {
     protected static int $day_number = 15;
 
-    private array $fastest_paths = [];
+    private array $fastest_paths;
     private array $grid;
     private int $height;
     private int $width;
 
-    private array $nodes_to_update = [];
+    private array $nodes_to_update;
 
     public function __construct()
     {
         parent::__construct();
         $this->grid = $this->input->grid;
+    }
+
+    private function init()
+    {
         $this->height = count($this->grid);
         $this->width = count($this->grid[0]);
 
+        $this->fastest_paths = [];
         $this->fastest_paths[0][0] = [0];
         $this->nodes_to_update = ['0,0' => ['x' => 0, 'y' => 0]];
     }
 
     public function getPartOneAnswer(): int
     {
+        $this->init();
+
         while (!empty($this->nodes_to_update)) {
             $node_to_update = array_shift($this->nodes_to_update);
             $this->updateFastestPathToNeighbours($node_to_update['x'], $node_to_update['y'], []);
@@ -34,13 +41,15 @@ class Day15Chiton extends AbstractPuzzle
         return array_sum($this->fastest_paths[$this->height-1][$this->width-1]);
     }
 
-    private function updateFastestPathToNeighbours(int $x, int $y, array $path_so_far)
+    private function updateFastestPathToNeighbours(int $x, int $y)
     {
-        $path_so_far["$x,$y"] = true;
         $fastest_to_current = $this->fastest_paths[$y][$x];
         $total = array_sum($fastest_to_current);
 
-//        echo "Updating path to $x, $y (path so far $total)\n";
+//        if ($x % 50 === 0 && $y % 50 === 0) {
+//            $to_update = count($this->nodes_to_update);
+//            echo "Finding path to $x, $y (current total $total, nodes to update $to_update)\n";
+//        }
 
         $neighbours = $this->getNeighbours($x, $y);
 
@@ -92,6 +101,35 @@ class Day15Chiton extends AbstractPuzzle
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        // Prepare the turbogrid
+        $new_grid = [];
+
+        foreach ($this->grid as $y => $row) {
+            foreach ($row as $x => $value) {
+                for ($i = 0; $i < 5; $i++) {
+                    for ($j = 0; $j < 5; $j++) {
+                        $new_x = $x + ($this->height * $i);
+                        $new_y = $y + ($this->width * $j);
+
+                        $new_value = $value + $i + $j;
+                        if ($new_value >= 10) {
+                            $new_value -= 9;
+                        }
+
+                        $new_grid[$new_y][$new_x] = $new_value;
+                    }
+                }
+            }
+        }
+
+        $this->grid = $new_grid;
+        $this->init();
+
+        while (!empty($this->nodes_to_update)) {
+            $node_to_update = array_shift($this->nodes_to_update);
+            $this->updateFastestPathToNeighbours($node_to_update['x'], $node_to_update['y']);
+        }
+
+        return array_sum($this->fastest_paths[$this->height-1][$this->width-1]);
     }
 }
