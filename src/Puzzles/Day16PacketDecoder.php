@@ -4,6 +4,17 @@ namespace App\Puzzles;
 
 class Day16PacketDecoder extends  AbstractPuzzle
 {
+    const PACKET_TYPES = [
+        0 => 'sum',
+        1 => 'product',
+        2 => 'minimum',
+        3 => 'maximum',
+        4 => 'literal',
+        5 => 'greater than',
+        6 => 'less than',
+        7 => 'equal to'
+    ];
+
     protected static int $day_number = 16;
 
     private string $bits;
@@ -14,6 +25,21 @@ class Day16PacketDecoder extends  AbstractPuzzle
         $this->bits = $this->packetToBits($this->input->lines[0]);
     }
 
+    private function getPacketValue(array $packet): int
+    {
+        $subvalues = array_column($packet['subpackets'], 'value');
+
+        return match ($packet['type_id']) {
+            0 => array_sum($subvalues),
+            1 => array_product($subvalues),
+            2 => min($subvalues),
+            3 => max($subvalues),
+            5 => $subvalues[0] > $subvalues[1],
+            6 => $subvalues[0] < $subvalues[1],
+            7 => $subvalues[0] == $subvalues[1],
+        };
+    }
+
     private function parsePacket(string $bits)
     {
         $packet = [];
@@ -21,9 +47,9 @@ class Day16PacketDecoder extends  AbstractPuzzle
         $packet['length'] = strlen($bits);
         $packet['version'] = $this->bitsToNumber($this->shiftBits($bits, 3));
         $packet['type_id'] = $this->bitsToNumber($this->shiftBits($bits, 3));
+        $packet['type'] = self::PACKET_TYPES[$packet['type_id']];
 
         if ($packet['type_id'] === 4) {
-            $packet['type'] = 'literal';
             $packet['value'] = $this->parseLiteralValue($bits);
             $packet['unprocessed'] = $bits;
             return $packet;
@@ -52,6 +78,7 @@ class Day16PacketDecoder extends  AbstractPuzzle
             }
         }
 
+        $packet['value'] = $this->getPacketValue($packet);
         $packet['unprocessed'] = $bits;
         return $packet;
 
@@ -115,12 +142,12 @@ class Day16PacketDecoder extends  AbstractPuzzle
     public function getPartOneAnswer(): int
     {
         $packet = $this->parsePacket($this->bits);
-//        print_r($packet);
         return $this->getVersionSum($packet);
     }
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        $packet = $this->parsePacket($this->bits);
+        return $packet['value'];
     }
 }
