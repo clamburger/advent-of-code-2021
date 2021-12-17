@@ -4,6 +4,8 @@ namespace App\Puzzles;
 
 class Probe
 {
+    public int $id;
+
     public array $position = ['x' => 0, 'y' => 0];
     public array $target;
     public array $velocity;
@@ -13,8 +15,9 @@ class Probe
     public bool $finished = false;
     public bool $success;
 
-    public function __construct(int $x_velocity, int $y_velocity, array $target)
+    public function __construct(int $id, int $x_velocity, int $y_velocity, array $target)
     {
+        $this->id = $id;
         $this->velocity['x'] = $x_velocity;
         $this->velocity['y'] = $y_velocity;
         $this->target = $target;
@@ -92,7 +95,9 @@ class Day17TrickShot extends AbstractPuzzle
 
     private array $target;
 
-    private int $probe_count = 0;
+    private int $probe_count;
+    private int $highest_probe;
+    private array $successful_probes;
 
     public function __construct()
     {
@@ -105,30 +110,39 @@ class Day17TrickShot extends AbstractPuzzle
             'y1' => $matches[3],
             'y2' => $matches[4],
         ];
+
+        $this->fireAllProbes();
+    }
+
+    private function fireAllProbes()
+    {
+        $this->probe_count = 0;
+        $this->highest_probe = 0;
+        $this->successful_probes = [];
+
+        for ($x = 0; $x <= $this->target['x2']; $x++) {
+            for ($y = abs($this->target['y1']) * 2; $y >= $this->target['y1']; $y--) {
+                $this->probe_count++;
+//                echo "Probe $this->probe_count: $x, $y\n";
+                $probe = new Probe($this->probe_count, $x, $y, $this->target);
+                $success = $probe->simulate();
+
+                if ($success) {
+//                    echo "Probe $this->probe_count: $x, $y\n";
+                    $this->highest_probe = max($this->highest_probe, $probe->highest_point);
+                    $this->successful_probes[] = $probe;
+                }
+            }
+        }
     }
 
     public function getPartOneAnswer(): int
     {
-        $highest_probe = 0;
-
-        for ($x = 0; $x <= $this->target['x2']; $x++) {
-            for ($y = abs($this->target['y1']) * 2; $y >= $this->target['y2']; $y--) {
-                $this->probe_count++;
-//                echo "Probe $this->probe_count: $x, $y\n";
-                $probe = new Probe($x, $y, $this->target);
-                $success = $probe->simulate();
-
-                if ($success) {
-                    $highest_probe = max($highest_probe, $probe->highest_point);
-                }
-            }
-        }
-
-        return $highest_probe;
+        return $this->highest_probe;
     }
 
     public function getPartTwoAnswer(): int
     {
-        return 0;
+        return count($this->successful_probes);
     }
 }
